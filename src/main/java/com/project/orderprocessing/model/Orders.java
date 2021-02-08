@@ -1,6 +1,8 @@
 package com.project.orderprocessing.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -11,11 +13,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
-@Data
+@Getter
+@Setter
 public class Orders {
 
     @Id
-    @GeneratedValue(generator = "uuid")
     @Column(name = "id")
     @Type(type = "pg-uuid")
     private UUID id;
@@ -24,11 +26,11 @@ public class Orders {
     @JoinColumn(name = "customer_id",referencedColumnName = "id",nullable =false)
     private Customers customers;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "status_id",referencedColumnName = "id",nullable = false)
     private OrderStatus orderStatus;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "shipping_id",referencedColumnName = "id",nullable = false)
     private Shipping shipping;
 

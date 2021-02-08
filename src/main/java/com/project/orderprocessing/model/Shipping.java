@@ -1,19 +1,21 @@
 package com.project.orderprocessing.model;
 
-import com.project.orderprocessing.model.Orders;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "shipping")
-@Data
+@Getter
+@Setter
 public class Shipping {
 
     @Id
-    @GeneratedValue(generator = "uuid")
     @Column(name = "id")
     @Type(type = "pg-uuid")
     private UUID id;
@@ -21,6 +23,6 @@ public class Shipping {
     @Column(name = "shipping_type",nullable = false)
     private String shippingType;
 
-    @OneToOne(mappedBy = "shipping")
-    private Orders orders;
+    @OneToMany(mappedBy = "shipping")
+    private List<Orders> orders;
 }
