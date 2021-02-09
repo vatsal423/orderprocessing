@@ -48,7 +48,7 @@ public class OrderProcessingService {
             order.setId(orderId);
 
             Optional<Customers> customer = customerRepository.findById(UUID.fromString(orderCreateDTO.getCustomerId()));
-            if (customer.isEmpty()) {
+            if (customer.isPresent()) {
                 log.error("Invalid Customer!");
                 return "Invalid Customer!";
             } else
@@ -58,7 +58,7 @@ public class OrderProcessingService {
             order.setOrderStatus(orderStatus);
 
             Optional<Shipping> shipping = shippingRepository.findById(UUID.fromString(orderCreateDTO.getShippingId()));
-            if (shipping.isEmpty()) {
+            if (shipping.isPresent()) {
                 log.error("Invalid Shipping Method!");
                 return "Invalid Shipping Method!";
             } else
@@ -68,7 +68,7 @@ public class OrderProcessingService {
             List<ItemCreateDTO> itemCreateDTOList = orderCreateDTO.getItems();
             for (int i = 0; i < itemCreateDTOList.size(); i++) {
                 Optional<Items> item = itemRepository.findById(UUID.fromString(itemCreateDTOList.get(i).getItemId()));
-                if (item.isEmpty()) {
+                if (item.isPresent()) {
                     log.error("Invalid Item" + i + 1 + "!");
                     return "Invalid Item" + i + 1 + "!";
                 } else {
@@ -119,7 +119,7 @@ public class OrderProcessingService {
             Payments payment = new Payments();
             payment.setId(UUID.randomUUID());
             Optional<PaymentsType> paymentsType = paymentsTypeRepository.findById(UUID.fromString(paymentCreateDTOList.get(i).getPaymentTypeId()));
-            if (paymentsType.isEmpty()) {
+            if (paymentsType.isPresent()) {
                 log.error("Invalid Payment Method!");
                 return "Invalid Payment Method!";
             } else
@@ -143,7 +143,7 @@ public class OrderProcessingService {
     public String orderCancelService(UUID orderId) {
         try {
             Optional<Orders> optionalOrder = orderRepository.findById(orderId);
-            if (optionalOrder.isEmpty()) {
+            if (optionalOrder.isPresent()) {
                 log.error("Invalid Order!");
                 return "Invalid Order!";
             } else {
@@ -165,7 +165,7 @@ public class OrderProcessingService {
         try{
             OrderGetDTO orderGetDTO = new OrderGetDTO();
             Optional<Orders> optionalOrder = orderRepository.findById(orderId);
-            if(optionalOrder.isEmpty()){
+            if(optionalOrder.isPresent()){
                 log.error("Invalid Order Id!");
                 orderGetDTO.setFailureMessage("Invalid Order Id!");
                 return orderGetDTO;

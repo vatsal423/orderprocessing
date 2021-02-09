@@ -4,7 +4,6 @@ import com.project.orderprocessing.dto.OrderCreateDTO;
 import com.project.orderprocessing.dto.OrderGetDTO;
 import com.project.orderprocessing.repository.CustomerRepository;
 import com.project.orderprocessing.service.OrderProcessingService;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@Log4j2
 public class OrderProcessingController {
 
     @Autowired
