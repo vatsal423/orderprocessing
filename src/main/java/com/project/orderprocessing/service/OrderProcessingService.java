@@ -48,7 +48,7 @@ public class OrderProcessingService {
             order.setId(orderId);
 
             Optional<Customers> customer = customerRepository.findById(UUID.fromString(orderCreateDTO.getCustomerId()));
-            if (customer.isPresent()) {
+            if (!customer.isPresent()) {
                 log.error("Invalid Customer!");
                 return "Invalid Customer!";
             } else
@@ -58,7 +58,7 @@ public class OrderProcessingService {
             order.setOrderStatus(orderStatus);
 
             Optional<Shipping> shipping = shippingRepository.findById(UUID.fromString(orderCreateDTO.getShippingId()));
-            if (shipping.isPresent()) {
+            if (!shipping.isPresent()) {
                 log.error("Invalid Shipping Method!");
                 return "Invalid Shipping Method!";
             } else
@@ -68,7 +68,7 @@ public class OrderProcessingService {
             List<ItemCreateDTO> itemCreateDTOList = orderCreateDTO.getItems();
             for (int i = 0; i < itemCreateDTOList.size(); i++) {
                 Optional<Items> item = itemRepository.findById(UUID.fromString(itemCreateDTOList.get(i).getItemId()));
-                if (item.isPresent()) {
+                if (!item.isPresent()) {
                     log.error("Invalid Item" + i + 1 + "!");
                     return "Invalid Item" + i + 1 + "!";
                 } else {
@@ -143,7 +143,7 @@ public class OrderProcessingService {
     public String orderCancelService(UUID orderId) {
         try {
             Optional<Orders> optionalOrder = orderRepository.findById(orderId);
-            if (optionalOrder.isPresent()) {
+            if (!optionalOrder.isPresent()) {
                 log.error("Invalid Order!");
                 return "Invalid Order!";
             } else {
@@ -152,8 +152,8 @@ public class OrderProcessingService {
                 order.setOrderStatus(orderStatus);
                 order.setModifiedDate(new Date());
                 Orders insertedOrder = orderRepository.save(order);
-                log.info("Order Cancelled!");
-                return "Order Cancelled!";
+                log.info("Order Successfully Cancelled!");
+                return "Order Successfully Cancelled!";
             }
         } catch (Exception e) {
             log.error("Error While Cancelling Order",e);
@@ -165,7 +165,7 @@ public class OrderProcessingService {
         try{
             OrderGetDTO orderGetDTO = new OrderGetDTO();
             Optional<Orders> optionalOrder = orderRepository.findById(orderId);
-            if(optionalOrder.isPresent()){
+            if (!optionalOrder.isPresent()) {
                 log.error("Invalid Order Id!");
                 orderGetDTO.setFailureMessage("Invalid Order Id!");
                 return orderGetDTO;
