@@ -104,34 +104,34 @@ public class OrderProcessingService {
     private String paymentItemCreateService(OrderCreateDTO orderCreateDTO, Orders order) {
 
         List<ItemCreateDTO> itemCreateDTOList = orderCreateDTO.getItems();
-        for (int i = 0; i < itemCreateDTOList.size(); i++) {
+        for (ItemCreateDTO itemCreateDTO : itemCreateDTOList) {
             OrderItems orderItem = new OrderItems();
             orderItem.setId(UUID.randomUUID());
             orderItem.setOrders(order);
-            Optional<Items> item = itemRepository.findById(UUID.fromString(itemCreateDTOList.get(i).getItemId()));
+            Optional<Items> item = itemRepository.findById(UUID.fromString(itemCreateDTO.getItemId()));
             orderItem.setItems(item.get());
-            orderItem.setQuantity(itemCreateDTOList.get(i).getQuantity());
+            orderItem.setQuantity(itemCreateDTO.getQuantity());
             orderItemRepository.save(orderItem);
         }
 
         List<PaymentCreateDTO> paymentCreateDTOList = orderCreateDTO.getPayments();
-        for (int i = 0; i < paymentCreateDTOList.size(); i++) {
+        for (PaymentCreateDTO paymentCreateDTO : paymentCreateDTOList) {
             Payments payment = new Payments();
             payment.setId(UUID.randomUUID());
-            Optional<PaymentsType> paymentsType = paymentsTypeRepository.findById(UUID.fromString(paymentCreateDTOList.get(i).getPaymentTypeId()));
-            if (paymentsType.isPresent()) {
+            Optional<PaymentsType> paymentsType = paymentsTypeRepository.findById(UUID.fromString(paymentCreateDTO.getPaymentTypeId()));
+            if (!paymentsType.isPresent()) {
                 log.error("Invalid Payment Method!");
                 return "Invalid Payment Method!";
             } else
                 payment.setPaymentsType(paymentsType.get());
             payment.setOrders(order);
-            payment.setAddressLine1(paymentCreateDTOList.get(i).getAddressLine1());
-            payment.setCardNo(paymentCreateDTOList.get(i).getCardNo());
-            payment.setAddressLine2(paymentCreateDTOList.get(i).getAddressLine2());
-            payment.setCity(paymentCreateDTOList.get(i).getCity());
-            payment.setState(paymentCreateDTOList.get(i).getState());
-            payment.setZip(paymentCreateDTOList.get(i).getZip());
-            payment.setAmount(paymentCreateDTOList.get(i).getAmount());
+            payment.setAddressLine1(paymentCreateDTO.getAddressLine1());
+            payment.setCardNo(paymentCreateDTO.getCardNo());
+            payment.setAddressLine2(paymentCreateDTO.getAddressLine2());
+            payment.setCity(paymentCreateDTO.getCity());
+            payment.setState(paymentCreateDTO.getState());
+            payment.setZip(paymentCreateDTO.getZip());
+            payment.setAmount(paymentCreateDTO.getAmount());
             payment.setDate(new Date());
             payment.setConfirmationNumber(UUID.randomUUID().toString());
             paymentRepository.save(payment);
@@ -180,25 +180,25 @@ public class OrderProcessingService {
             orderGetDTO.setOrderStatus(order.getOrderStatus().getName());
 
             List<ItemGetDTO> itemGetDTOList = new ArrayList<>();
-            for(int i=0;i<order.getOrderItemsList().size();i++){
+            for (OrderItems orderItems : order.getOrderItemsList()) {
                 ItemGetDTO itemGetDTO = new ItemGetDTO();
-                itemGetDTO.setItemName(order.getOrderItemsList().get(i).getItems().getName());
-                itemGetDTO.setQuantity(order.getOrderItemsList().get(i).getQuantity());
+                itemGetDTO.setItemName(orderItems.getItems().getName());
+                itemGetDTO.setQuantity(orderItems.getQuantity());
                 itemGetDTOList.add(itemGetDTO);
             }
             orderGetDTO.setItems(itemGetDTOList);
 
             List<PaymentGetDTO> paymentGetDTOList = new ArrayList<>();
-            for (int i=0;i<order.getPaymentsList().size();i++){
+            for (Payments payments : order.getPaymentsList()) {
                 PaymentGetDTO paymentGetDTO = new PaymentGetDTO();
-                paymentGetDTO.setPaymentType(order.getPaymentsList().get(i).getPaymentsType().getPaymentType());
-                paymentGetDTO.setAmount(order.getPaymentsList().get(i).getAmount());
-                paymentGetDTO.setCardNo(order.getPaymentsList().get(i).getCardNo());
-                paymentGetDTO.setAddressLine1(order.getPaymentsList().get(i).getAddressLine1());
-                paymentGetDTO.setAddressLine2(order.getPaymentsList().get(i).getAddressLine2());
-                paymentGetDTO.setCity(order.getPaymentsList().get(i).getCity());
-                paymentGetDTO.setState(order.getPaymentsList().get(i).getState());
-                paymentGetDTO.setZip(order.getPaymentsList().get(i).getZip());
+                paymentGetDTO.setPaymentType(payments.getPaymentsType().getPaymentType());
+                paymentGetDTO.setAmount(payments.getAmount());
+                paymentGetDTO.setCardNo(payments.getCardNo());
+                paymentGetDTO.setAddressLine1(payments.getAddressLine1());
+                paymentGetDTO.setAddressLine2(payments.getAddressLine2());
+                paymentGetDTO.setCity(payments.getCity());
+                paymentGetDTO.setState(payments.getState());
+                paymentGetDTO.setZip(payments.getZip());
                 paymentGetDTOList.add(paymentGetDTO);
             }
             orderGetDTO.setPayments(paymentGetDTOList);
@@ -207,10 +207,10 @@ public class OrderProcessingService {
             orderGetDTO.setSuccessMesage("Order Details Fetched!");
             return orderGetDTO;
 
-        }catch(Exception e){
+        }catch(Exception e) {
             OrderGetDTO orderGetDTO = new OrderGetDTO();
-            log.error("Error while fecthing the Order Details",e);
-            orderGetDTO.setFailureMessage("Error while fecthing the Order Details");
+            log.error("Error while fetching the Order Details", e);
+            orderGetDTO.setFailureMessage("Error while fetching the Order Details");
             return orderGetDTO;
         }
     }

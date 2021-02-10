@@ -3,9 +3,7 @@ package com.project.orderprocessing;
 import com.project.orderprocessing.model.*;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class MockModelObjects {
 
@@ -19,6 +17,15 @@ public class MockModelObjects {
         order.setTaxAmount(new BigDecimal(20));
         order.setShippingAmount(new BigDecimal(10));
         order.setTotalAmount(new BigDecimal(629));
+
+        List<OrderItems> orderItems = new ArrayList<>();
+        orderItems.add(getOrderItem().get());
+        order.setOrderItemsList(orderItems);
+
+        List<Payments> paymentsList = new ArrayList<>();
+        paymentsList.add(getPayments().get());
+        order.setPaymentsList(paymentsList);
+
         order.setCreatedDate(new Date());
         order.setModifiedDate(new Date());
         return Optional.of(order);
@@ -58,8 +65,38 @@ public class MockModelObjects {
     public Optional<Shipping> getShipping() {
         Shipping shipping = new Shipping();
         shipping.setId(UUID.fromString("95e7a476-6b5a-11eb-9439-0242ac130002"));
-        shipping.setShippingType("Credit Card");
+        shipping.setShippingType("Home Delivery");
         return Optional.of(shipping);
+    }
+
+    public Optional<Payments> getPayments() {
+        Payments payment = new Payments();
+        payment.setId(UUID.fromString("c2c3e468-6b6a-11eb-9439-0242ac130002"));
+        payment.setConfirmationNumber("edc968b8-6b6a-11eb-9439-0242ac130002");
+        payment.setCardNo("1234567891234567");
+        payment.setPaymentsType(getPaymentType().get());
+        payment.setAmount(new BigDecimal(629));
+        payment.setAddressLine1("1234 Test Street");
+        payment.setAddressLine2("Apt 0001");
+        payment.setCity("Dallas");
+        payment.setState("Texas");
+        payment.setZip(70000);
+        return Optional.of(payment);
+    }
+
+    public Optional<PaymentsType> getPaymentType() {
+        PaymentsType paymentsType = new PaymentsType();
+        paymentsType.setId(UUID.fromString("1e3b0da2-6b6c-11eb-9439-0242ac130002"));
+        paymentsType.setPaymentType("Credit Card");
+        return Optional.of(paymentsType);
+    }
+
+    public Optional<OrderItems> getOrderItem() {
+        OrderItems orderItems = new OrderItems();
+        orderItems.setId(UUID.fromString("e4f70978-6b6c-11eb-9439-0242ac130002"));
+        orderItems.setItems(getItem().get());
+        orderItems.setQuantity(1);
+        return Optional.of(orderItems);
     }
 
 }
